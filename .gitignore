@@ -1,0 +1,10 @@
+# vs code
+.DS_Store
+
+# jetbrain
+.idea
+
+# node.js
+dist
+node_modules
+package-lock.json
