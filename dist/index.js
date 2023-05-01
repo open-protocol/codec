@@ -7,7 +7,7 @@ export var CodecType;
     CodecType[CodecType["Array"] = 3] = "Array";
     CodecType[CodecType["Map"] = 4] = "Map";
 })(CodecType || (CodecType = {}));
-class Codec {
+export class Codec {
 }
 _a = Codec;
 Codec.encodeString = (s) => {
@@ -148,5 +148,4 @@ Codec.decode = (buffer) => {
 Codec.isMapKey = (key) => {
     return typeof key === 'number' || typeof key === 'bigint' || typeof key === 'string';
 };
-export { Codec };
 //# sourceMappingURL=index.js.map

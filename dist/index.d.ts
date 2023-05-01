@@ -1,6 +1,6 @@
 /// <reference types="node" />
-export type MapKey = string | number | bigint;
-export type CodecSupported = string | number | bigint | null | undefined | CodecSupported[] | Map<MapKey, CodecSupported>;
+export declare type MapKey = string | number | bigint;
+export declare type CodecSupported = string | number | bigint | null | undefined | CodecSupported[] | Map<MapKey, CodecSupported>;
 export declare enum CodecType {
     Null = 0,
     Number = 1,
