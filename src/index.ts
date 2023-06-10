@@ -17,12 +17,7 @@ export enum CodecType {
 
 export class Codec {
   static encodeString = (s: string): Buffer => {
-    const isHex = /^[0-9a-fA-F]+$/;
-    if (!isHex.test(s)) {
-      throw new Error("String must be hex.");
-    }
-    const fullHex = s.length & 1 ? `0${s}` : s;
-    return Buffer.from(fullHex, "hex");
+    return Buffer.from(s, "utf8");
   };
 
   static encodeNumber = (num: number | bigint): Buffer => {
@@ -131,7 +126,7 @@ export class Codec {
       } else if (type === CodecType.String) {
         const length = buffer.subarray(index + 1, index + 3).readUint16LE();
         const valueBuffer = buffer.subarray(index + 3, index + 3 + length);
-        values.push(valueBuffer.toString("hex"));
+        values.push(valueBuffer.toString("utf8"));
         index += 3 + length;
       } else if (type === CodecType.Array) {
         const length = buffer.subarray(index + 1, index + 5).readUint32LE();
