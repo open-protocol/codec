@@ -1,4 +1,4 @@
-import { Codec, CodecSupported } from ".";
+import { Codec } from ".";
 
 const from = "01";
 const to = "02";

@@ -1,4 +1,7 @@
-export type MapKey = string | number | bigint;
+import { CodecError } from "./error";
+export { CodecError };
+
+export type MapKey = string;
 export type CodecSupported =
   | string
   | number
@@ -22,7 +25,7 @@ export class Codec {
 
   static encodeNumber = (num: number | bigint): Buffer => {
     if (num < 0) {
-      throw new Error("Number must be greater than or equal to zero.");
+      throw CodecError.negativeNumber();
     }
     const hex = num.toString(16);
     const fullHex = hex.length & 1 ? `0${hex}` : hex;
@@ -81,7 +84,7 @@ export class Codec {
         let bufferLength = 0;
         for (const [key, value] of map) {
           if (!this.isMapKey(key)) {
-            throw new Error("Unsupported key type.");
+            throw CodecError.unsupportedKeyType();
           }
           const keyBuffer = this.encode([key]);
           const valueBuffer = this.encode([value]);
@@ -100,7 +103,7 @@ export class Codec {
           ])
         );
       } else {
-        throw new Error("Not supported type.");
+        throw CodecError.unsupportedType();
       }
     }
     return Buffer.concat(buffers);
@@ -143,24 +146,20 @@ export class Codec {
           const key = arrayValues[i];
           const value = arrayValues[i + 1];
           if (!this.isMapKey(key)) {
-            throw new Error("Unsupported key type.");
+            throw CodecError.unsupportedKeyType();
           }
           map.set(key as MapKey, value);
         }
         values.push(map);
         index += 5 + length;
       } else {
-        throw new Error("Unsupported type.");
+        throw CodecError.unsupportedType();
       }
     }
     return values;
   };
 
   static isMapKey = (key: CodecSupported): boolean => {
-    return (
-      typeof key === "number" ||
-      typeof key === "bigint" ||
-      typeof key === "string"
-    );
+    return typeof key === "string";
   };
 }
