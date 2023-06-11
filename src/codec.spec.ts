@@ -10,7 +10,7 @@ const signature = "01";
 test("encode and decode test", () => {
   const encoded = Codec.encode([from, to, value, nonce, input, signature]);
   expect(encoded.toString("hex")).toBe(
-    "0302003031030200303203020030310201000203020030300302003031"
+    "03020030310302003032030200303102010203020030300302003031"
   );
   const decoded = Codec.decode(encoded);
   expect(decoded[0]).toBe(from);
@@ -41,13 +41,13 @@ test("encode string test", () => {
 test("encode number test", () => {
   const num1 = 1000000000;
   const encoded1 = Codec.encode([num1]);
-  expect(encoded1.toString("hex")).toBe("0204003b9aca00");
+  expect(encoded1.toString("hex")).toBe("02043b9aca00");
   const decoded1 = Codec.decode(encoded1);
   expect(decoded1[0]).toBe(1000000000);
 
   const num2 = 1;
   const encoded2 = Codec.encode([num2]);
-  expect(encoded2.toString("hex")).toBe("02010001");
+  expect(encoded2.toString("hex")).toBe("020101");
   const decoded2 = Codec.decode(encoded2);
   expect(decoded2[0]).toBe(1);
 });
@@ -61,7 +61,7 @@ test("array encode test", () => {
   ];
   const encoded = Codec.encode([array]);
   expect(encoded.toString("hex")).toBe(
-    "04530000000340003765396364383535646462323033393634363439646130393665626261303531353037306462393161306266636261393665346636393261643538326632646303020066660304006666666602010064"
+    "045200000003400037653963643835356464623230333936343634396461303936656262613035313530373064623931613062666362613936653466363932616435383266326463030200666603040066666666020164"
   );
 });
 

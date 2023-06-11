@@ -47,9 +47,8 @@ export class Codec {
         );
       } else if (typeof value === "number") {
         const buffer = this.encodeNumber(value);
-        const u16a = new Uint16Array(1);
-        u16a[0] = buffer.length;
-        const bufferLength = new Uint8Array(u16a.buffer);
+        const bufferLength = new Uint8Array(1);
+        bufferLength[0] = buffer.length;
         buffers.push(
           Buffer.concat([Buffer.from([CodecType.Number]), bufferLength, buffer])
         );
@@ -125,14 +124,14 @@ export class Codec {
         values.push(valueBuffer);
         index += 5 + length;
       } else if (type === CodecType.Number) {
-        const length = buffer.subarray(index + 1, index + 3).readUint16LE();
-        const valueBuffer = buffer.subarray(index + 3, index + 3 + length);
+        const length = buffer.subarray(index + 1, index + 2).readUint8();
+        const valueBuffer = buffer.subarray(index + 2, index + 2 + length);
         const number = parseInt(valueBuffer.toString("hex"), 16);
         if (!Number.isSafeInteger(number)) {
           throw CodecError.unsafeInteger();
         }
         values.push(number);
-        index += 3 + length;
+        index += 2 + length;
       } else if (type === CodecType.String) {
         const length = buffer.subarray(index + 1, index + 3).readUint16LE();
         const valueBuffer = buffer.subarray(index + 3, index + 3 + length);
