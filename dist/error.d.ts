@@ -6,4 +6,5 @@ export declare class CodecError implements Error {
     static negativeNumber: () => CodecError;
     static unsupportedKeyType: () => CodecError;
     static unsupportedType: () => CodecError;
+    static unsafeInteger: () => CodecError;
 }

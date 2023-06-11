@@ -22,4 +22,8 @@ export class CodecError implements Error {
   static unsupportedType = (): CodecError => {
     return new CodecError("UnsupportedType", "Unsupported type");
   };
+
+  static unsafeInteger = (): CodecError => {
+    return new CodecError("UnsafeInteger", "Unsafe integer");
+  };
 }

@@ -13,4 +13,7 @@ CodecError.unsupportedKeyType = () => {
 CodecError.unsupportedType = () => {
     return new CodecError("UnsupportedType", "Unsupported type");
 };
+CodecError.unsafeInteger = () => {
+    return new CodecError("UnsafeInteger", "Unsafe integer");
+};
 //# sourceMappingURL=error.js.map

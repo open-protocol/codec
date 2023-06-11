@@ -4,10 +4,11 @@ export { CodecError };
 export var CodecType;
 (function (CodecType) {
     CodecType[CodecType["Null"] = 0] = "Null";
-    CodecType[CodecType["Number"] = 1] = "Number";
-    CodecType[CodecType["String"] = 2] = "String";
-    CodecType[CodecType["Array"] = 3] = "Array";
-    CodecType[CodecType["Map"] = 4] = "Map";
+    CodecType[CodecType["Buffer"] = 1] = "Buffer";
+    CodecType[CodecType["Number"] = 2] = "Number";
+    CodecType[CodecType["String"] = 3] = "String";
+    CodecType[CodecType["Array"] = 4] = "Array";
+    CodecType[CodecType["Map"] = 5] = "Map";
 })(CodecType || (CodecType = {}));
 export class Codec {
 }
@@ -23,18 +24,19 @@ Codec.encodeNumber = (num) => {
     const fullHex = hex.length & 1 ? `0${hex}` : hex;
     return Buffer.from(fullHex, "hex");
 };
-Codec.bufferLength = (buffer) => {
-    const u16a = new Uint16Array(1);
-    u16a[0] = buffer.length;
-    return new Uint8Array(u16a.buffer);
-};
 Codec.encode = (values) => {
     const buffers = new Array();
     for (const value of values) {
         if (value === null || typeof value === "undefined") {
             buffers.push(Buffer.from([CodecType.Null]));
         }
-        else if (typeof value === "number" || typeof value === "bigint") {
+        else if (Buffer.isBuffer(value)) {
+            const u32a = new Uint32Array(1);
+            u32a[0] = value.length;
+            const bufferLength = new Uint8Array(u32a.buffer);
+            buffers.push(Buffer.concat([Buffer.from([CodecType.Buffer]), bufferLength, value]));
+        }
+        else if (typeof value === "number") {
             const buffer = _a.encodeNumber(value);
             const u16a = new Uint16Array(1);
             u16a[0] = buffer.length;
@@ -104,15 +106,20 @@ Codec.decode = (buffer) => {
             values.push(null);
             index += 1;
         }
+        else if (type === CodecType.Buffer) {
+            const length = buffer.subarray(index + 1, index + 5).readUint32LE();
+            const valueBuffer = buffer.subarray(index + 5, index + 5 + length);
+            values.push(valueBuffer);
+            index += 5 + length;
+        }
         else if (type === CodecType.Number) {
             const length = buffer.subarray(index + 1, index + 3).readUint16LE();
             const valueBuffer = buffer.subarray(index + 3, index + 3 + length);
-            if (length <= 6) {
-                values.push(parseInt(valueBuffer.toString("hex"), 16));
+            const number = parseInt(valueBuffer.toString("hex"), 16);
+            if (!Number.isSafeInteger(number)) {
+                throw CodecError.unsafeInteger();
             }
-            else {
-                values.push(BigInt(`0x${valueBuffer.toString("hex")}`));
-            }
+            values.push(number);
             index += 3 + length;
         }
         else if (type === CodecType.String) {
